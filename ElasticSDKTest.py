@@ -11,7 +11,6 @@ credentials = ClientSecretCredential(
     )
 
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
-resource_group = os.environ["AZURE_RESOURCE_GROUP"]
 
 elastic_client = MicrosoftElastic(credentials, 
 subscription_id)
@@ -47,5 +46,12 @@ monitor_resource = ElasticMonitorResource(properties = monitor_properties,locati
 
 
 elastic_client.monitors.begin_create("vakuncha-test-rg",resource_name,monitor_resource).result()
+
+print(f"updating tagrules for  Resource {resource_name}")
+
+monitoring_tagrules = MonitoringTagRules(properties=MonitoringTagRulesProperties(log_rules=LogRules(send_subscription_logs=True,send_activity_logs=True)))
+
+elastic_client.tag_rules.create_or_update("vakuncha-test-rg",resource_name,"default",monitoring_tagrules)
+
 
 
